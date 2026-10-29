@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RUAYRUAY GROUP — Glassmorphism UI & Collapsible Sidebar Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+    }
+    /* Glassmorphism utility classes */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s ease;
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(99, 102, 241, 0.2);
+    }
+    .glass-card-active {
+      background: rgba(99, 102, 241, 0.18);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+    }
+    .glass-nav-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .glass-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .glass-nav-btn.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.45), rgba(168, 85, 247, 0.35));
+      border: 1px solid rgba(165, 180, 252, 0.4);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-screen relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+  <!-- Ambient Glowing Background Spheres for Frosted Glass Effect -->
+  <div class="fixed top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-indigo-600/20 blur-[130px] pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-purple-600/15 blur-[150px] pointer-events-none -z-10"></div>
+  <div class="fixed top-[40%] right-[25%] w-[400px] h-[400px] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none -z-10"></div>
+
+  <!-- Top Glass Bar -->
+  <header class="glass-panel px-6 py-3.5 flex justify-between items-center sticky top-0 z-50 border-b border-white/10">
+    <div class="flex items-center gap-4">
+      <!-- Sidebar Toggle Button -->
+      <button onclick="toggleSidebar()" id="btn-toggle-sidebar" class="p-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-indigo-300 transition flex items-center justify-center text-lg" title="เปิด/ปิด Sidebar">
+        <span id="sidebar-icon">◀</span>
+      </button>
+
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-indigo-500/30">
+          R
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-wide flex items-center gap-2">
+            RUAYRUAY GROUP <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">Glass Edition</span>
+          </h1>
+          <p class="text-xs text-slate-400">TikTok Affiliate Showcase & Auto-Video Studio</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Mode Switcher -->
+    <div class="flex gap-2">
+      <button onclick="switchView('dashboard')" id="btn-dashboard" class="px-4 py-1.5 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold border border-indigo-400/40 shadow-lg shadow-indigo-600/25 transition">
+        🖥️ Dashboard เต็มหน้า
+      </button>
+      <button onclick="switchView('sidepanel')" id="btn-sidepanel" class="px-4 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 text-xs font-semibold border border-white/10 transition">
+        📱 Side Panel ย่อส่วน
+      </button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: FULL DASHBOARD -->
+  <div id="view-dashboard" class="flex min-h-[calc(100vh-65px)]">
+
+    <!-- Collapsible Glass Sidebar -->
+    <aside id="main-sidebar" class="w-64 glass-panel border-r border-white/10 p-4 flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out">
+      <div>
+        <div class="sidebar-text px-3 py-2 mb-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+          <span>เมนูการทำงาน</span>
+          <span class="text-[10px] text-indigo-400">V2.0</span>
+        </div>
+        <nav class="space-y-1.5">
+          <button onclick="showTab('overview')" class="tab-btn glass-nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium" data-tab="overview">
+            <span class="text-base">📊</span> <span class="sidebar-text">ภาพรวมระบบ</span>
+          </button>
+          <button onclick="showTab('products')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="products">
+            <span class="text-base">🛍️</span> <span class="sidebar-text">สินค้า Showcase</span>
+            <span class="sidebar-text ml-auto bg-indigo-500/20 text-indigo-300 text-[11px] px-2 py-0.5 rounded-full border border-indigo-400/20">48</span>
+          </button>
+          <button onclick="showTab('queue')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="queue">
+            <span class="text-base">⚡</span> <span class="sidebar-text">คิวงานผลิตคลิป</span>
+            <span class="sidebar-text ml-auto bg-amber-500/20 text-amber-300 text-[11px] px-2 py-0.5 rounded-full border border-amber-400/20">3</span>
+          </button>
+          <button onclick="showTab('review')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="review">
+            <span class="text-base">👁️</span> <span class="sidebar-text">รออนุมัติ (Review)</span>
+            <span class="sidebar-text ml-auto bg-rose-500/30 text-rose-300 text-[11px] px-2 py-0.5 rounded-full border border-rose-400/30 font-bold">2</span>
+          </button>
+          <button onclick="showTab('schedule')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="schedule">
+            <span class="text-base">📅</span> <span class="sidebar-text">ตั้งเวลา & Loop</span>
+          </button>
+          <button onclick="showTab('history')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="history">
+            <span class="text-base">📜</span> <span class="sidebar-text">ประวัติโพสต์</span>
+          </button>
+          <button onclick="showTab('health')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="health">
+            <span class="text-base">🩺</span> <span class="sidebar-text">สุขภาพ Selector</span>
+          </button>
+          <button onclick="showTab('settings')" class="tab-btn glass-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white" data-tab="settings">
+            <span class="text-base">⚙️</span> <span class="sidebar-text">ตั้งค่าระบบ</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Emergency Global Stop Inside Sidebar -->
+      <div class="sidebar-footer glass-card p-3 rounded-2xl border-white/10 mt-6">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-slate-400">สถานะคิวรวม</span>
+          <span class="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ปกติ
+          </span>
+        </div>
+        <button class="w-full py-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-rose-900/30 flex items-center justify-center gap-2">
+          🛑 หยุดฉุกเฉินทั้งหมด
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-8 overflow-y-auto max-w-7xl">
+
+      <!-- TAB: ภาพรวม (Overview) -->
+      <section id="tab-overview" class="tab-content space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+              ภาพรวมระบบ <span class="text-xs px-3 py-1 rounded-full bg-white/10 text-indigo-300 font-normal border border-white/10">Bento Glass Console</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">มอนิเตอร์สถานะการทำงาน แพลตฟอร์ม และคิวงานผลิตคลิปอัตโนมัติ</p>
+          </div>
+          <div class="glass-card px-4 py-2 rounded-2xl flex items-center gap-3">
+            <span class="text-xs text-slate-400 font-medium">โหมดโพสต์ปัจจุบัน:</span>
+            <span class="bg-indigo-500/20 text-indigo-300 text-xs px-3 py-1 rounded-full font-bold border border-indigo-400/30">
+              โหมด A: ตรวจก่อนโพสต์ (Review)
+            </span>
+          </div>
+        </div>
+
+        <!-- 4 Glass Stat Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="glass-card p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">งานทั้งหมดวันนี้</span>
+            <div class="text-3xl font-extrabold text-white mt-2">12 <span class="text-xs font-normal text-slate-400">คลิป</span></div>
+            <div class="text-xs text-emerald-400 mt-2 font-medium flex items-center gap-1">
+              <span>↑</span> โพสต์สำเร็จแล้ว 8 คลิป (ไม่มีเพดานโควตา)
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">กำลังสร้างคลิป</span>
+            <div class="text-3xl font-extrabold text-amber-400 mt-2">2 <span class="text-xs font-normal text-slate-400">งาน</span></div>
+            <div class="text-xs text-slate-400 mt-2 font-medium">Meta AI กำลังเรนเดอร์ (10s)</div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl border-rose-500/30 bg-rose-500/10">
+            <span class="text-xs font-semibold text-rose-300 uppercase tracking-wider">รอคุณตรวจอนุมัติ</span>
+            <div class="text-3xl font-extrabold text-rose-400 mt-2">2 <span class="text-xs font-normal text-rose-300/70">คลิป</span></div>
+            <div class="text-xs text-rose-300 mt-2 font-medium font-semibold flex items-center gap-1">
+              <span>👉</span> รอตรวจเช็กข้อความป้าย A4
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">สินค้า Showcase</span>
+            <div class="text-3xl font-extrabold text-indigo-300 mt-2">48 <span class="text-xs font-normal text-slate-400">ชิ้น</span></div>
+            <div class="text-xs text-slate-400 mt-2 font-medium">ซิงก์ตรงผ่าน Session Cookie</div>
+          </div>
+        </div>
+
+        <!-- Glass Platform Pre-flight Lights -->
+        <div class="glass-panel p-6 rounded-3xl">
+          <h3 class="font-bold text-white mb-4 flex items-center gap-2 text-sm tracking-wide">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-500/50"></span>
+            สถานะความพร้อมของแพลตฟอร์ม (Pre-flight Health)
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-500/40"></span>
+              <div>
+                <div class="text-sm font-bold text-white">TikTok Session</div>
+                <div class="text-xs text-emerald-400 font-medium">ล็อกอินอยู่ (Cookie พร้อม)</div>
+              </div>
+            </div>
+            <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-500/40"></span>
+              <div>
+                <div class="text-sm font-bold text-white">Meta AI Video</div>
+                <div class="text-xs text-emerald-400 font-medium">พร้อมสร้างวิดีโอ (10s)</div>
+              </div>
+            </div>
+            <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-500/40"></span>
+              <div>
+                <div class="text-sm font-bold text-white">DeepSeek API</div>
+                <div class="text-xs text-emerald-400 font-medium">เชื่อมต่อสำเร็จ (Key Valid)</div>
+              </div>
+            </div>
+            <div class="glass-card p-4 rounded-2xl flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-md shadow-emerald-500/40"></span>
+              <div>
+                <div class="text-sm font-bold text-white">TikTok Studio</div>
+                <div class="text-xs text-emerald-400 font-medium">พร้อมปักตะกร้า & โพสต์</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Glass Active Jobs Preview Table -->
+        <div class="glass-panel p-6 rounded-3xl">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-white text-sm">งานที่กำลังดำเนินการ (Active Running Jobs)</h3>
+            <button onclick="showTab('queue')" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300">เปิดดูคิวทั้งหมด →</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-xs text-slate-400 border-b border-white/10">
+                <tr>
+                  <th class="py-3 px-4">สินค้า</th>
+                  <th class="py-3 px-4">ข้อความบนป้าย A4</th>
+                  <th class="py-3 px-4">สถานะการผลิต</th>
+                  <th class="py-3 px-4">ความคืบหน้า</th>
+                  <th class="py-3 px-4 text-right">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                <tr>
+                  <td class="py-4 px-4 font-semibold text-white flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-xs text-slate-400">รูป</div>
+                    <div>
+                      <div>สบู่วิตามินซีแล็ปโซพ 10 ก้อน 120฿</div>
+                      <span class="text-[11px] text-indigo-300 font-normal">รหัส: 1729485720194857</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-slate-200 font-medium font-mono text-xs">"ล็อตสุดท้าย!"</td>
+                  <td class="py-4 px-4">
+                    <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs px-3 py-1 rounded-full font-semibold">
+                      Meta AI กำลังเรนเดอร์
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="w-36 bg-white/10 rounded-full h-2 overflow-hidden border border-white/10">
+                      <div class="bg-gradient-to-r from-amber-500 to-indigo-500 h-2 rounded-full" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-right">
+                    <button class="text-xs text-rose-400 hover:text-rose-300 font-semibold">ยกเลิก</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: สินค้า Showcase -->
+      <section id="tab-products" class="tab-content space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white">สินค้าใน Showcase (TikTok Shop)</h2>
+            <p class="text-xs text-slate-400 mt-1">ดึงตรงผ่าน Showcase API สามารถติ๊กเลือกหลายรายการเพื่อสร้างชุดงาน (Batch)</p>
+          </div>
+          <button class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center gap-2">
+            🔄 ซิงก์สินค้าใหม่จาก TikTok
+          </button>
+        </div>
+
+        <!-- Floating Glass Selection Bar -->
+        <div class="glass-panel p-4 rounded-2xl flex justify-between items-center border-indigo-500/30 bg-indigo-950/40 shadow-xl">
+          <div class="flex items-center gap-3">
+            <span class="bg-indigo-600/80 text-white px-3 py-1 rounded-xl font-bold text-xs border border-indigo-400/40">
+              เลือกไว้ 3 รายการ
+            </span>
+            <span class="text-xs text-indigo-200">สินค้าจะถูกส่งผลิตคลิปและจัดสรรเวลาโพสต์ตามต้องการ</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1.5 bg-white/5 hover:bg-white/15 text-slate-300 text-xs rounded-xl border border-white/10 transition">ล้างการเลือก</button>
+            <button class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition">
+              ✨ สร้างชุดงาน (Create Batch)
+            </button>
+          </div>
+        </div>
+
+        <!-- Glass Products Table -->
+        <div class="glass-panel p-6 rounded-3xl">
+          <div class="flex gap-3 mb-4">
+            <input type="text" placeholder="🔍 ค้นหาชื่อสินค้า หรือ Product ID..." class="flex-1 px-4 py-2 bg-white/5 border border-white/15 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:border-indigo-400">
+            <select class="px-4 py-2 bg-slate-900 border border-white/15 rounded-xl text-xs text-slate-300 focus:outline-none">
+              <option>ทุกหมวดหมู่</option>
+              <option>สกินแคร์ / ความงาม</option>
+              <option>ของใช้ในบ้าน</option>
+            </select>
+          </div>
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs text-slate-400 border-b border-white/10">
+              <tr>
+                <th class="py-3 px-3"><input type="checkbox" checked class="rounded bg-white/10 border-white/20"></th>
+                <th class="py-3 px-3">ลำดับ</th>
+                <th class="py-3 px-4">รูป & ชื่อสินค้า</th>
+                <th class="py-3 px-4">Product ID</th>
+                <th class="py-3 px-4">ราคา / คอมมิชชัน</th>
+                <th class="py-3 px-4">สต็อก</th>
+                <th class="py-3 px-4">สถานะ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              <tr class="glass-card-active">
+                <td class="py-4 px-3"><input type="checkbox" checked></td>
+                <td class="py-4 px-3 font-semibold text-slate-400">1</td>
+                <td class="py-4 px-4 font-bold text-white flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10"></div>
+                  <div>
+                    <div>สบู่วิตามินซีแล็ปโซพ 10 ก้อน 120฿</div>
+                    <span class="text-[11px] text-indigo-300 font-normal">สกินแคร์</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 font-mono text-xs text-slate-400">1729485720194857</td>
+                <td class="py-4 px-4 font-semibold text-white">฿120 <span class="text-xs text-emerald-400">(15%)</span></td>
+                <td class="py-4 px-4 text-slate-300">450 ชิ้น</td>
+                <td class="py-4 px-4"><span class="text-xs bg-white/10 px-2.5 py-1 rounded-full text-slate-300 border border-white/10">ยังไม่เคยโพสต์</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB: รออนุมัติ (Review Mode - โหมด A) -->
+      <section id="tab-review" class="tab-content space-y-6 hidden">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white">ตรวจสอบและอนุมัติคลิป (Review Mode)</h2>
+            <p class="text-xs text-slate-400 mt-1">ด่านตรวจคุณภาพก่อนโพสต์: ตรวจเช็กความถูกต้องของตัวหนังสือบนป้าย A4 และแคปชัน</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-4 py-2 bg-white/5 hover:bg-white/15 text-slate-300 font-semibold rounded-xl text-xs border border-white/10 transition">
+              ปฏิเสธทั้งหมด
+            </button>
+            <button class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition">
+              ✓ อนุมัติทั้งหมด (2 คลิป)
+            </button>
+          </div>
+        </div>
+
+        <!-- Glass Review Card -->
+        <div class="glass-panel p-6 rounded-3xl border-indigo-400/30">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- 9:16 Video Player Preview -->
+            <div class="md:col-span-4 bg-slate-950/80 rounded-2xl overflow-hidden aspect-[9/16] relative flex flex-col items-center justify-center border border-white/15 shadow-2xl">
+              <span class="text-5xl mb-2 text-indigo-400">▶️</span>
+              <span class="text-xs text-slate-400">ตัวอย่างคลิป 9:16 (10s)</span>
+              
+              <!-- Frosted Frame Zoom Badge -->
+              <div class="absolute bottom-4 left-4 right-4 glass-panel p-3.5 rounded-xl border border-white/20 text-xs">
+                <div class="text-amber-300 font-bold mb-1 flex items-center gap-1.5">
+                  <span>🔍</span> ตรวจสอบข้อความบนป้าย A4:
+                </div>
+                <div class="text-white font-semibold font-mono">ข้อความที่สั่ง: "ล็อตสุดท้าย!"</div>
+              </div>
+            </div>
+
+            <!-- Review Details Form -->
+            <div class="md:col-span-8 space-y-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">สินค้าเป้าหมาย</span>
+                  <h3 class="text-xl font-bold text-white">สบู่วิตามินซีแล็ปโซพ 10 ก้อน 120฿</h3>
+                  <div class="text-xs text-slate-400 font-mono mt-0.5">Product ID: 1729485720194857 | ตะกร้า: ผูกเรียบร้อย</div>
+                </div>
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs px-3 py-1 rounded-full font-bold">
+                  QC ผ่าน (10.0s, 9:16)
+                </span>
+              </div>
+
+              <!-- Editable Caption -->
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">แคปชัน TikTok (แก้ไขได้อิสระ):</label>
+                <textarea rows="3" class="w-full p-3 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-400">สบู่วิตามินซีตัวดัง ล็อตสุดท้ายแล้วจ้า! ผิวดูสดใสเป็นธรรมชาติ ฟองนุ่มมากก สนใจรีบกดที่ตะกร้าด่วนเลยนะคะ 🍊✨ #สบู่วิตามินซี #ของดีบอกต่อ #tiktokป้ายยา</textarea>
+              </div>
+
+              <!-- Voiceover Used -->
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="text-[11px] font-bold text-slate-400 uppercase mb-1">บทพูดในคลิป (Voiceover 1 ชุดต่อเนื่อง):</div>
+                <div class="text-xs text-slate-200">"สบู่วิตามินซีตัวดัง! ช่วยให้ผิวดูสดใสขึ้นนะคะ ล็อตสุดท้ายแล้วจ้า ของดีแบบนี้ต้องรีบจัดเลยจ้า!"</div>
+                <div class="text-[11px] text-slate-400 mt-1">ความยาว: 93 ตัวอักษร (≈ 9.3 ตัวอักษร/วินาที - ผ่านเกณฑ์ 11 ตัวอักษร/วินาที)</div>
+              </div>
+
+              <!-- Scheduled Time -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase mb-1">เวลาที่จะโพสต์:</label>
+                  <input type="datetime-local" class="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-xs text-white" value="2026-10-29T18:30">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 uppercase mb-1">วิธีโพสต์ที่ระบบเลือก:</label>
+                  <div class="text-xs bg-white/5 border border-white/10 p-2.5 rounded-xl text-emerald-400 font-medium">
+                    วิธีที่ 1: ตั้งเวลาตรงผ่าน TikTok Studio (ปิดเครื่องได้)
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+                <button class="px-4 py-2 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 font-bold rounded-xl text-xs transition">
+                  🗑️ ปฏิเสธ
+                </button>
+                <button class="px-4 py-2 border border-white/20 text-slate-300 hover:bg-white/10 font-bold rounded-xl text-xs transition">
+                  🔄 สั่งสร้างใหม่
+                </button>
+                <button class="px-6 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition">
+                  ✓ อนุมัติ & ส่งเข้าคิวโพสต์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: ตั้งค่า (Settings) -->
+      <section id="tab-settings" class="tab-content space-y-6 hidden">
+        <h2 class="text-2xl font-extrabold text-white">การตั้งค่าระบบ (Settings)</h2>
+
+        <div class="glass-panel p-6 rounded-3xl space-y-4">
+          <h3 class="font-bold text-white border-b border-white/10 pb-2 text-sm">1. DeepSeek API</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">DeepSeek API Key:</label>
+              <div class="flex gap-2">
+                <input type="password" value="sk-xxxxxxxxxxxxxxxxxxxxxxxx" class="flex-1 px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-xs text-white font-mono">
+                <button class="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold">ทดสอบคีย์</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">โมเดลที่ใช้ (Model Name):</label>
+              <input type="text" value="deepseek-chat" class="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-xs text-white font-mono">
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-3xl space-y-4">
+          <h3 class="font-bold text-white border-b border-white/10 pb-2 text-sm">2. การตั้งเวลาและรอบการโพสต์ (กำหนดได้อิสระ ไม่มีโควตาบังคับ)</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">โหมดโพสต์เริ่มต้น:</label>
+              <select class="w-full px-3 py-2 bg-slate-900 border border-white/15 rounded-xl text-xs text-white">
+                <option>โหมด A: ตรวจก่อนโพสต์ (Review)</option>
+                <option>โหมด B: โพสต์อัตโนมัติ (Auto)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">ช่วงเวลาที่อนุญาตโพสต์:</label>
+              <input type="text" value="09:00 - 21:00 (หรือเปิด 24 ชม.)" class="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">เมื่อพลาดเวลาโพสต์:</label>
+              <select class="w-full px-3 py-2 bg-slate-900 border border-white/15 rounded-xl text-xs text-white">
+                <option>ถามผู้ใช้ก่อนเสมอ (Ask First)</option>
+                <option>เลื่อนไปเวลาว่างถัดไป</option>
+                <option>ยกเลิกคลิปนั้น</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: คิวงาน / ปฏิทิน / สุขภาพ / ประวัติ (Placeholder screens) -->
+      <section id="tab-queue" class="tab-content hidden"><div class="glass-panel p-8 text-center text-slate-400 font-medium rounded-3xl">📋 หน้าคิวงานฉบับเต็ม พร้อม Log และสถานะ State Machine</div></section>
+      <section id="tab-schedule" class="tab-content hidden"><div class="glass-panel p-8 text-center text-slate-400 font-medium rounded-3xl">📅 หน้าปฏิทินโพสต์ และแสดงสถานะ Loop</div></section>
+      <section id="tab-history" class="tab-content hidden"><div class="glass-panel p-8 text-center text-slate-400 font-medium rounded-3xl">📜 หน้าประวัติโพสต์และลิงก์คลิปจริงบน TikTok</div></section>
+      <section id="tab-health" class="tab-content hidden"><div class="glass-panel p-8 text-center text-slate-400 font-medium rounded-3xl">🩺 หน้าตรวจเช็กสุขภาพ Selector พร้อมปุ่มโหลด Debug Bundle</div></section>
+
+    </main>
+  </div>
+
+  <!-- VIEW 2: SIDE PANEL COMPACT (Glass Style) -->
+  <div id="view-sidepanel" class="hidden max-w-sm mx-auto glass-panel min-h-screen p-5 flex flex-col justify-between shadow-2xl border-x border-white/15 my-4 rounded-3xl">
+    <div class="space-y-4">
+      <!-- Sidepanel Header -->
+      <div class="flex justify-between items-center pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-xs text-white shadow-md">R</div>
+          <span class="font-bold text-sm text-white">RUAYRUAY Quick Control</span>
+        </div>
+        <span class="text-[11px] bg-emerald-500/20 text-emerald-400 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-400/20">พร้อมทำงาน</span>
+      </div>
+
+      <!-- Quick Emergency Stop -->
+      <div class="grid grid-cols-2 gap-2">
+        <button class="py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-1.5">
+          ▶️ เริ่มคิวต่อ
+        </button>
+        <button class="py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-900/40 transition flex items-center justify-center gap-1.5">
+          🛑 หยุดฉุกเฉิน
+        </button>
+      </div>
+
+      <!-- Mode Switcher -->
+      <div class="glass-card p-3 rounded-2xl">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400">โหมดการโพสต์:</span>
+          <span class="font-bold text-indigo-300">โหมด A: รอตรวจ</span>
+        </div>
+      </div>
+
+      <!-- Currently Active Job -->
+      <div class="glass-card p-4 rounded-2xl space-y-2 border-amber-500/30 bg-amber-500/5">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-amber-400 font-bold">⚡ กำลังสร้างคลิป (1/3)</span>
+          <span class="text-slate-400 text-[11px]">Meta AI 10s</span>
+        </div>
+        <div class="text-sm font-bold text-white truncate">สบู่วิตามินซีแล็ปโซพ 10 ก้อน</div>
+        <div class="text-xs text-slate-400">ป้าย: "ล็อตสุดท้าย!"</div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden border border-white/10">
+          <div class="bg-gradient-to-r from-amber-400 to-indigo-500 h-1.5 rounded-full" style="width: 70%"></div>
+        </div>
+      </div>
+
+      <!-- Review Alert Card -->
+      <div class="glass-card p-4 rounded-2xl space-y-2 border-rose-500/30 bg-rose-500/10">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-rose-300 font-bold">👁️ มี 2 คลิป รออนุมัติ</span>
+          <span class="text-rose-400 underline cursor-pointer text-[11px]">ตรวจด่วน</span>
+        </div>
+        <div class="text-xs text-slate-300">คลิปสร้างเสร็จแล้ว รอคุณเช็กป้าย A4 ก่อนโพสต์</div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="pt-4 border-t border-white/10">
+      <button onclick="switchView('dashboard')" class="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition">
+        🖥️ เปิดหน้าต่าง Dashboard เต็มจอ
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let sidebarOpen = true;
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('main-sidebar');
+      const textElements = document.querySelectorAll('.sidebar-text');
+      const footer = document.querySelector('.sidebar-footer');
+      const icon = document.getElementById('sidebar-icon');
+
+      sidebarOpen = !sidebarOpen;
+
+      if (sidebarOpen) {
+        sidebar.classList.remove('w-20');
+        sidebar.classList.add('w-64');
+        textElements.forEach(el => el.classList.remove('hidden'));
+        if (footer) footer.classList.remove('hidden');
+        icon.textContent = '◀';
+      } else {
+        sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-20');
+        textElements.forEach(el => el.classList.add('hidden'));
+        if (footer) footer.classList.add('hidden');
+        icon.textContent = '▶';
+      }
+    }
+
+    function switchView(view) {
+      if (view === 'dashboard') {
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        document.getElementById('view-sidepanel').classList.add('hidden');
+        document.getElementById('btn-dashboard').classList.add('bg-indigo-600/80', 'text-white');
+        document.getElementById('btn-sidepanel').classList.remove('bg-indigo-600/80', 'text-white');
+      } else {
+        document.getElementById('view-dashboard').classList.add('hidden');
+        document.getElementById('view-sidepanel').classList.remove('hidden');
+        document.getElementById('btn-sidepanel').classList.add('bg-indigo-600/80', 'text-white');
+        document.getElementById('btn-dashboard').classList.remove('bg-indigo-600/80', 'text-white');
+      }
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

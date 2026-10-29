@@ -1,0 +1,8 @@
+Bundled component: @ffmpeg/core 0.12.10 (FFmpeg WebAssembly single-thread build)
+License: GNU General Public License version 2 or later (GPL-2.0-or-later)
+Source: https://github.com/ffmpegwasm/ffmpeg.wasm
+Package: https://www.npmjs.com/package/@ffmpeg/core/v/0.12.10
+License text: https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+The bundled ffmpeg-core.js and ffmpeg-core.wasm are unmodified copies from
+@ffmpeg/core 0.12.10. The JarbLand integration is in ffmpeg-merge-worker.js.
